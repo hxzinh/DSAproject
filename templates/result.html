@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuronary</title>
+  <link rel="stylesheet" href="../statics/css/index.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Include jQuery UI -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>  
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Kuronary - Your Dictionary</h1>
+  
+    <form class="form__contact" method="POST" action="/search">
+      <fieldset>
+        <div class="form__contact">
+          <p class="form__contact"> <b class="large-text">Search for a Word  :</b>
+            <input class="form__contact" type="text" name="txt" id="autocomplete" placeholder="Input here" required></input> 
+          </p>
+          <div>
+            <input type="radio" id="anh-viet" name="trans_option" value="anh-viet" {% if trans_option== "anh-viet" %} checked {% endif %}>
+            <label for="anh-viet">Anh-Viet</label>
+          </div>
+          <div>
+            <input type="radio" id="viet-anh" name="trans_option" value="viet-anh" {% if trans_option == "viet-anh" %} checked {% endif %}>
+            <label for="viet-anh">Viet-Anh</label>
+          </div>
+          <button type="submit" class="button button--large">Search &#187</button> 
+        </div>
+      
+        {% if word %}
+          <div class="form__contact" id="dictionaryResults">
+            <h2>Search Results</h2>
+            <p><strong>Word:</strong> {{ word }}</p>
+            <p><strong>Pronunciation:</strong> {{ pronunciation }}</p>
+            <p><strong>Definition: <div>
+                {% autoescape false %}
+                {{definition}}
+                {% endautoescape %}
+              </div>
+            </p>
+          </div>
+        {% else %}
+          <p>No results found. Please try again with a different word.</p>
+        {% endif %}
+      </fieldset>
+    </form>
+  </div>
+  
+  <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+    <defs>
+      <filter id="blur0">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0 0" />
+      </filter>
+      <filter id="blur1">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0 5" />
+      </filter>
+      <filter id="blur2">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0 10" />
+      </filter>
+      <filter id="blur3">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0 15" />
+      </filter>
+      <filter id="blur4">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="0 20" />
+      </filter>
+    </defs>
+  </svg>
+
+  <script>
+    $(function() {
+        $("#autocomplete").autocomplete({
+            source: function(request, response) {
+                var selectedOption = $("input[name='trans_option']:checked").val();
+                $.ajax({
+                    url: "/suggestion",
+                    // dataType: "json",
+                    data: {
+                        word: request.term,
+                        trans_option: selectedOption
+                    },
+                    success: function(data) {
+                        response(data); // Pass the received data to the response callback
+                    }
+                });
+            },
+            minLength: 1 // Minimum characters before triggering autocomplete
+        });
+    });
+  </script>
+
+</body>
+</html>
