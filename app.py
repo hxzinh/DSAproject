@@ -71,6 +71,10 @@ def suggestion():
     """
     word = request.args.get("word").lower()
     trans_option = request.args.get("trans_option")
+
+    if not word or not trans_option:
+        return []
+
     if trans_option == "anh-viet":
         data = trie_av.get_prefix(word)
     elif trans_option == "viet-anh":
@@ -89,4 +93,5 @@ if __name__ == '__main__':
     trie_va = TrieTree()
     InitTrie(trie_av, dictionary_av)
     InitTrie(trie_va, dictionary_va)
+    
     app.run(host="0.0.0.0", port=5000, debug=True)
