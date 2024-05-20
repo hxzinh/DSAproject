@@ -8,12 +8,28 @@ dictionary_av = {}
 dictionary_va = {}
 
 def Opendictionary(files):
+    """
+    Opens a JSON dictionary file and loads its content.
+
+    Args:
+        files (str): The name of the dictionary file (without extension).
+
+    Returns:
+        dict: The dictionary loaded from the JSON file.
+    """
     diction = dict()
     with open(f"database/{files}.json",'r') as file:
         diction = json.load(file)
     return diction
 
 def InitTrie(trie, dictionary):
+    """
+    Initializes a Trie tree with words, pronunciations, and definitions from a dictionary. Using Trie algorithm to optimize search time.
+
+    Args:
+        trie (TrieTree): The TrieTree instance to be initialized.
+        dictionary (dict): The dictionary containing words, pronunciations, and definitions.
+    """
     for item in dictionary:
         word_i = item['word']
         pronunciation = item['pronunciation']
@@ -23,10 +39,25 @@ def InitTrie(trie, dictionary):
 @app.route('/')
 @app.route('/home')
 def home():
+    """
+    Renders the home page of the application which contains the search form.
+
+    Returns:
+        str: The rendered HTML template for the home page.
+    """
     return render_template("index.html", boolean = True)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
+    """
+    Handles search requests, finds the word in the appropriate Trie, and renders the result page.
+
+    Methods:
+        GET, POST
+
+    Returns:
+        str: The rendered HTML template for the search results.
+    """
     txt = ""
     trans_option = "" 
 
@@ -93,5 +124,5 @@ if __name__ == '__main__':
     trie_va = TrieTree()
     InitTrie(trie_av, dictionary_av)
     InitTrie(trie_va, dictionary_va)
-    
+
     app.run(host="0.0.0.0", port=5000, debug=True)
