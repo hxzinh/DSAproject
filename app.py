@@ -89,4 +89,4 @@ if __name__ == '__main__':
     trie_va = TrieTree()
     InitTrie(trie_av, dictionary_av)
     InitTrie(trie_va, dictionary_va)
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
