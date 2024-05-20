@@ -16,7 +16,7 @@
   
     <form class="form__contact" method="POST" action="/search">
       <fieldset>
-        <div class="form__contact">
+        
           <p class="form__contact"> <b class="large-text">Search for a Word  :</b>
             <input class="form__contact" type="text" name="txt" id="autocomplete" placeholder="Input here" required></input> 
           </p>
@@ -29,48 +29,27 @@
             <label for="viet-anh">Viet-Anh</label>
           </div>
           <button type="submit" class="button button--large">Search &#187</button> 
-        </div>
+        
       
         {% if word %}
           <div class="form__contact" id="dictionaryResults">
             <h2>Search Results</h2>
-            <p><strong>Word:</strong> {{ word }}</p>
-            <p class="pronunciation-font"><strong>Pronunciation:</strong> {{ pronunciation }}</p>
-            <p><strong>Definition: <div>
-                {% autoescape false %}
-                {{definition}}
-                {% endautoescape %}
-              </div>
-            </p>
+            {% if not_found == "" %}
+              <p><strong>Word:</strong> {{ word }}</p>
+              <p class="pronunciation-font"><strong>Pronunciation:</strong> {{ pronunciation }}</p>
+              <p><strong>Definition: <div>
+                  {% autoescape false %}
+                  {{definition}}
+                  {% endautoescape %}
+                </div>
+              </p>
+            {% else %}
+              <p><strong>Do you mean:</strong> {{not_found}}</p>
+            {% endif %}
           </div>
         {% else %}
           <p>No results found. Please try again with a different word.</p>
         {% endif %}
-        <script>
-          $(function() {
-            var word = "{{ word }}";
-            var trans_option = "{{ trans_option }}";
-      
-            // Check if the word is not found
-            if (word === "Not found") {
-              $.ajax({
-                type: "POST", // Use POST method since it's used in the /not_found route
-                url: "/not_found",
-                data: {
-                  txt: word,
-                  trans_option: trans_option
-                },
-                success: function(data) {
-                  // Replace the current HTML content with the response from /not_found
-                  $("body").html(data);
-                },
-                error: function(xhr, status, error) {
-                  console.error(error);
-                  // Handle error if needed
-                }
-              });
-            }
-          });
         </script>
       </fieldset>
     </form>
@@ -98,43 +77,6 @@
 
   <script>
     $(function() {
-      
-      $("form").submit(function(event) {
-            event.preventDefault(); // Prevent the form from submitting normally
-            
-            var txt = $("#autocomplete").val(); // Get the input text
-            var selectedOption = $("input[name='trans_option']:checked").val(); // Get the selected translation option
-            
-            $.ajax({
-                type: "POST",
-                url: "/search",
-                data: {
-                    txt: txt,
-                    trans_option: selectedOption
-                },
-                success: function(data) {
-                    if (data.indexOf("Not found") !== -1) {
-                        // If "Not found" is in the response, call the not_found function
-                        $.ajax({
-                            type: "GET",
-                            url: "/not_found",
-                            data: {
-                                txt: txt,
-                                trans_option: selectedOption
-                            },
-                            success: function(data) {
-                                // Replace the current HTML content with the response from not_found
-                                $("body").html(data);
-                            }
-                        });
-                    } else {
-                        // Replace the current HTML content with the response from search
-                        $("body").html(data);
-                    }
-                }
-            });
-        });
-  
         $("#autocomplete").autocomplete({
             source: function(request, response) {
                 var selectedOption = $("input[name='trans_option']:checked").val();

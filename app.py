@@ -1,4 +1,4 @@
-from flask import render_template, Flask, request
+from flask import render_template, Flask, request, jsonify
 import json
 from trietree import TrieTree
 from aho_croasick import AhoCroasick
@@ -74,35 +74,37 @@ def search():
         str: The rendered HTML template for the search results.
     """
     txt = ""
-    trans_option = "" 
+    trans_option = ""
+    is_found = ""
 
     if request.method == "POST":
         txt = request.form["txt"]
         trans_option = request.form["trans_option"]
     elif request.method == "GET":
         txt = request.args.get("txt")
-        trans_option = request.args.get["trans_option"]
-
-    print(txt)
+        trans_option = request.args.get("trans_option")
 
     if trans_option == "anh-viet":
         word, pronunciation, definition = trie_av.find(txt)
     else:
-        word, pronunciation, definition  = trie_va.find(txt)
+        word, pronunciation, definition = trie_va.find(txt)
 
-    print(word, pronunciation, type(definition))
+    print(word)
+    if word == "Not found":
+        is_found = not_found(txt)
+        is_found = ', '.join(is_found)
 
     definition = definition.replace("\n", "<br>")
     pronunciation = "/" + pronunciation + "/" if pronunciation != "" else ""
-    print(definition)
 
     return render_template(
         "result.html",
-        word = word,
-        pronunciation = pronunciation,
-        definition = definition,
-        trans_option = trans_option,
-    ) 
+        word=word,
+        pronunciation=pronunciation,
+        definition=definition,
+        trans_option=trans_option,
+        not_found=is_found
+    )
 
 @app.route("/suggestion", methods=["GET"])
 def suggestion():
@@ -128,8 +130,8 @@ def suggestion():
         data = trie_va.get_prefix(word)
     return data[0:10]
 
-@app.route("/not_found", methods=["GET", "POST"])
-def not_found():
+#@app.route("/not_found", methods=["GET", "POST"])
+def not_found(word):
     """
     Handles cases where a word is not found in the Trie.
 
@@ -140,23 +142,15 @@ def not_found():
     Returns:
         list: A list of words from the Aho-Corasick search results.
     """
-    word = ""
-    trans_option = "" 
-
-    word = request.form.get("txt") or request.args.get("txt")
-    trans_option = request.form.get("trans_option") or request.args.get("trans_option")
 
     data = aho.search(word)
-    result = [u for i, u in data if len(u) >= 3]
+    result = []
+    for i, u in data:
+        if len(u) >= 3 and u not in result:
+            result.append(u)
 
     print(result)
-    return render_template(
-        "not_found.html",
-        word = word,
-        pronunciation = "",
-        definition = result,
-        trans_option = trans_option,
-    ) 
+    return result
 
 if __name__ == '__main__':
     """
