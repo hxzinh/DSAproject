@@ -46,6 +46,32 @@
         {% else %}
           <p>No results found. Please try again with a different word.</p>
         {% endif %}
+        <script>
+          $(function() {
+            var word = "{{ word }}";
+            var trans_option = "{{ trans_option }}";
+      
+            // Check if the word is not found
+            if (word === "Not found") {
+              $.ajax({
+                type: "POST", // Use POST method since it's used in the /not_found route
+                url: "/not_found",
+                data: {
+                  txt: word,
+                  trans_option: trans_option
+                },
+                success: function(data) {
+                  // Replace the current HTML content with the response from /not_found
+                  $("body").html(data);
+                },
+                error: function(xhr, status, error) {
+                  console.error(error);
+                  // Handle error if needed
+                }
+              });
+            }
+          });
+        </script>
       </fieldset>
     </form>
   </div>
@@ -72,6 +98,43 @@
 
   <script>
     $(function() {
+      
+      $("form").submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            var txt = $("#autocomplete").val(); // Get the input text
+            var selectedOption = $("input[name='trans_option']:checked").val(); // Get the selected translation option
+            
+            $.ajax({
+                type: "POST",
+                url: "/search",
+                data: {
+                    txt: txt,
+                    trans_option: selectedOption
+                },
+                success: function(data) {
+                    if (data.indexOf("Not found") !== -1) {
+                        // If "Not found" is in the response, call the not_found function
+                        $.ajax({
+                            type: "GET",
+                            url: "/not_found",
+                            data: {
+                                txt: txt,
+                                trans_option: selectedOption
+                            },
+                            success: function(data) {
+                                // Replace the current HTML content with the response from not_found
+                                $("body").html(data);
+                            }
+                        });
+                    } else {
+                        // Replace the current HTML content with the response from search
+                        $("body").html(data);
+                    }
+                }
+            });
+        });
+  
         $("#autocomplete").autocomplete({
             source: function(request, response) {
                 var selectedOption = $("input[name='trans_option']:checked").val();

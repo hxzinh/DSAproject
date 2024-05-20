@@ -1,11 +1,13 @@
 from flask import render_template, Flask, request
 import json
 from trietree import TrieTree
+from aho_croasick import AhoCroasick
 
 app = Flask(__name__, static_folder="statics")
 
 dictionary_av = {}
 dictionary_va = {}
+aho = {}
 
 def Opendictionary(files):
     """
@@ -35,6 +37,19 @@ def InitTrie(trie, dictionary):
         pronunciation = item['pronunciation']
         definition = item['definition']
         trie.insert(word_i, pronunciation, definition)
+
+def InitAhoCroasick(dictionary):
+    """
+    Initializes an Aho-Corasick tree with words from a dictionary.
+
+    Args:
+        dictionary (dict): The dictionary containing words.
+    
+    Returns:
+        AhoCorasick: The initialized AhoCorasick instance.
+    """
+    keywords = [item['word'] for item in dictionary]
+    return AhoCroasick(keywords)
 
 @app.route('/')
 @app.route('/home')
@@ -75,10 +90,11 @@ def search():
     else:
         word, pronunciation, definition  = trie_va.find(txt)
 
-    print(word, pronunciation, definition)
+    print(word, pronunciation, type(definition))
 
     definition = definition.replace("\n", "<br>")
     pronunciation = "/" + pronunciation + "/" if pronunciation != "" else ""
+    print(definition)
 
     return render_template(
         "result.html",
@@ -112,6 +128,36 @@ def suggestion():
         data = trie_va.get_prefix(word)
     return data[0:10]
 
+@app.route("/not_found", methods=["GET", "POST"])
+def not_found():
+    """
+    Handles cases where a word is not found in the Trie.
+
+    Args:
+        word (str): The word to be searched in the Aho-Corasick structure.
+        trans_option (str): The translation option ("anh-viet" or "viet-anh").
+
+    Returns:
+        list: A list of words from the Aho-Corasick search results.
+    """
+    word = ""
+    trans_option = "" 
+
+    word = request.form.get("txt") or request.args.get("txt")
+    trans_option = request.form.get("trans_option") or request.args.get("trans_option")
+
+    data = aho.search(word)
+    result = [u for i, u in data if len(u) >= 3]
+
+    print(result)
+    return render_template(
+        "not_found.html",
+        word = word,
+        pronunciation = "",
+        definition = result,
+        trans_option = trans_option,
+    ) 
+
 if __name__ == '__main__':
     """
     The main execution block.
@@ -124,5 +170,7 @@ if __name__ == '__main__':
     trie_va = TrieTree()
     InitTrie(trie_av, dictionary_av)
     InitTrie(trie_va, dictionary_va)
+
+    aho = InitAhoCroasick(dictionary_av)
 
     app.run(host="0.0.0.0", port=5000, debug=True)

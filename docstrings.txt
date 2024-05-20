@@ -1,0 +1,203 @@
+-------------------------------------------------- trietree.py ------------------------------------------------------------
+class TrieNode(builtins.object)
+ |  TrieNode(text='', pronunciation='', definition='')
+ |
+ |  A node in the Trie structure.
+ |
+ |  Attributes:
+ |      text (str): The text represented by this node.
+ |      pronunciation (str): The pronunciation of the word ending at this node.
+ |      definition (str): The definition of the word ending at this node.
+ |      children (dict): A dictionary mapping each character to its corresponding TrieNode.
+ |      is_end_of_word (bool): A flag indicating if this node marks the end of a word.
+ 
+ class TrieTree(builtins.object)
+ |  A Trie (prefix tree) for storing strings with additional information.
+ |
+ |  Methods:
+ |      insert(word, pronunciation, definition):
+ |          Inserts a word along with its pronunciation and definition into the Trie.
+ |      find(word):
+ |          Finds and returns the word, pronunciation, and definition if the word exists in the Trie.
+ |      get_child(current_node, words):
+ |          Recursively collects all words that are children of the current node.
+ |      get_prefix(prefix):
+ |          Returns all words in the Trie that start with the given prefix.
+ |
+ |  Methods defined here:
+ |
+ |  __init__(self)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |
+ |  find(self, word)
+ |      Finds a word in the Trie and returns its text, pronunciation, and definition.
+ |
+ |      Args:
+ |          word (str): The word to find.
+ |
+ |      Returns:
+ |          tuple: A tuple containing the text, pronunciation, and definition of the word.
+ |                 If the word is not found, returns ("Not found", "", "").
+ |
+ |  get_child(self, current_node, words)
+ |      Recursively collects all words that are children of the current node.
+ |
+ |      Args:
+ |          current_node (TrieNode): The node from which to collect words.
+ |          words (list): The list to which collected words are appended.
+ |
+ |  get_prefix(self, prefix)
+ |      Returns all words in the Trie that start with the given prefix.
+ |
+ |      Args:
+ |          prefix (str): The prefix to search for.
+ |
+ |      Returns:
+ |          list: A list of words starting with the given prefix.
+ |
+ |  insert(self, word, pronunciation, definition)
+ |      Inserts a word into the Trie with its pronunciation and definition.
+ |
+ |          pronunciation (str): The pronunciation of the word.
+ |          definition (str): The definition of the word.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |
+ |  __dict__
+ |      dictionary for instance variables
+ |
+ |  __weakref__
+ |      list of weak references to the object
+
+ ---------------------------------------------------aho-croasick.py-------------------------------------------------------------------------
+class AhoNode(builtins.object)
+ |  A node in the Aho-Corasick trie.
+ |
+ |  Attributes:
+ |      children (dict): A dictionary mapping characters to child nodes.
+ |      failure_link (AhoNode): A reference to the node where the algorithm should jump in case of a failure.
+ |      output (list): A list of keywords that end at this node.
+ |
+ |
+ |  __init__(self)
+ |      Initialize self.  See help(type(self)) for accurate signature.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |
+ |  __dict__
+ |      dictionary for instance variables
+ |
+ |  __weakref__
+ |      list of weak references to the object
+
+ class AhoCroasick(builtins.object)
+ |  AhoCroasick(keywords)
+ |
+ |  A class implementing the Aho-Corasick string matching algorithm.
+ |
+ |  Attributes:
+ |      root (AhoNode): The root node of the Aho-Corasick trie.
+ |
+ |  Methods defined here:
+ |
+ |  __init__(self, keywords)
+ |      Initializes the Aho-Corasick trie with the given keywords and builds failure links.
+ |
+ |      Args:
+ |          keywords (list): A list of strings to search for.
+ |
+ |  build_aho(self, keywords)
+ |      Builds the Aho-Corasick trie by adding each keyword to the trie.
+ |
+ |      Args:
+ |          keywords (list): A list of strings to add to the trie.
+ |
+ |  build_failure_links(self)
+ |      Builds the failure links in the Aho-Corasick trie using a breadth-first search.
+ |
+ |  search(self, text)
+ |      Searches for keywords in the given text using the Aho-Corasick algorithm.
+ |
+ |      Args:
+ |
+ |      Returns:
+ |          list: A list of tuples containing the starting index and the matched keyword.
+ |
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |
+ |  __dict__
+ |      dictionary for instance variables
+ |
+ |  __weakref__
+ |      list of weak references to the object
+
+ ---------------------------------------------app.py-----------------------------------------------------------------------
+Help on function Opendictionary in module app:
+Opendictionary(files)
+    Opens a JSON dictionary file and loads its content.
+
+    Args:
+        files (str): The name of the dictionary file (without extension).
+
+    Returns:
+        dict: The dictionary loaded from the JSON file.
+
+Help on function InitTrie in module app:
+InitTrie(trie, dictionary)
+    Initializes a Trie tree with words, pronunciations, and definitions from a dictionary. Using Trie algorithm to optimize search time.
+
+    Args:
+        trie (TrieTree): The TrieTree instance to be initialized.
+        dictionary (dict): The dictionary containing words, pronunciations, and definitions.
+
+Help on function InitAhoCroasick in module app:
+InitAhoCroasick(dictionary)
+    Initializes an Aho-Corasick tree with words from a dictionary.
+
+    Args:
+        dictionary (dict): The dictionary containing words.
+
+    Returns:
+        AhoCorasick: The initialized AhoCorasick instance.
+
+Help on function home in module app:
+home()
+    Renders the home page of the application which contains the search form.
+
+    Returns:
+        str: The rendered HTML template for the home page.
+
+Help on function search in module app:
+search()
+    Handles search requests, finds the word in the appropriate Trie, and renders the result page.
+
+    Methods:
+        GET, POST
+
+    Returns:
+        str: The rendered HTML template for the search results.
+
+Help on function suggestion in module app:
+suggestion()
+    Provides word suggestions based on the prefix entered by the user.
+
+    Args:
+        word (str): The prefix of the word to get suggestions for.
+        translation_option (str): The translation option ("anh-viet" or "viet-anh").
+
+    Returns:
+        list: A list of up to 10 word suggestions matching the prefix.
+
+Help on function not_found in module app:
+not_found()
+    Handles cases where a word is not found in the Trie.
+
+    Args:
+        word (str): The word to be searched in the Aho-Corasick structure.
+        trans_option (str): The translation option ("anh-viet" or "viet-anh").
+
+    Returns:
+        list: A list of words from the Aho-Corasick search results.
