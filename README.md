@@ -1,3 +1,9 @@
+## About the website
+I build a simple website optimized with Trie and Aho-Corasick Alhorithm in Python using Flask framework
+
+![image](https://hackmd.io/_uploads/rJa7GFFmR.png)
+
+
 ## Installation 
 
 1. Clone the repository

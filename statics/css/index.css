@@ -84,8 +84,6 @@ h1 {
     border: none;}
     .form__contact input:focus {
       outline: none; }
-  .form__contact trans {
-    padding: 30px 30px 40px 50px;}
 
 .form__field {
   display: inline;
