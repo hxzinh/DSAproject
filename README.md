@@ -1,7 +1,8 @@
 ## About the website
 I build a simple website optimized with Trie and Aho-Corasick Alhorithm in Python using Flask framework
 
-![image](https://hackmd.io/_uploads/rJa7GFFmR.png)
+![image](https://github.com/hxzinh/DSAproject/assets/81129015/c2539fa9-03d3-4839-9849-f3f14e2acd3f)
+
 
 
 ## Installation 
