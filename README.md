@@ -28,4 +28,6 @@ python app.py
 3. Now you can see the dictionary website, enter a word in search bar and explore.
 
 ## Author
-**Hoang Xuan Vinh - ATTN2023 - 23521789**
+**Hoang Xuan Vinh - ATTN2023 - 23521789**.  
+
+
