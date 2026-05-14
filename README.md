@@ -27,7 +27,7 @@ python app.py
 2. Open your web browser and go to `http://localhost:5000`
 3. Now you can see the dictionary website, enter a word in search bar and explore.
 
+## Add test feature
+
 ## Author
 **Hoang Xuan Vinh - ATTN2023 - 23521789**.  
-
-
